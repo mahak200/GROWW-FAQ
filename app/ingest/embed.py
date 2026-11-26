@@ -1,4 +1,4 @@
-"""Embed chunks with the configured sentence-transformer. Reads data/chunks only."""
+"""Embed chunks locally with sentence-transformers and queries with bundled ONNX."""
 
 from __future__ import annotations
 
@@ -6,14 +6,19 @@ import json
 import shutil
 import sys
 
+from chromadb.utils.embedding_functions.onnx_mini_lm_l6_v2 import ONNXMiniLM_L6_V2
+
 from app.config import INGEST_IDS, ROOT, load_settings
+
+ONNXMiniLM_L6_V2.DOWNLOAD_PATH = ROOT / "data" / "onnx_models" / "all-MiniLM-L6-v2"
 
 _model = None
 _model_name: str | None = None
+_onnx_ef = None
 
 
 def load_model(model_name: str):
-    """Load the configured model once and reuse it for chunks and queries."""
+    """Load the configured model once and reuse it for chunk ingestion."""
     global _model, _model_name
     if _model is None or _model_name != model_name:
         from sentence_transformers import SentenceTransformer
@@ -33,8 +38,11 @@ def embed_texts(texts: list[str], model_name: str) -> list[list[float]]:
 
 
 def embed_query(text: str, model_name: str) -> list[float]:
-    """Embed one query with the same model used for ingestion."""
-    return embed_texts([text], model_name)[0]
+    """Embed one query with the ONNX model matching the indexed vectors."""
+    global _onnx_ef
+    if _onnx_ef is None:
+        _onnx_ef = ONNXMiniLM_L6_V2()
+    return [float(value) for value in _onnx_ef([text])[0]]
 
 
 def embed_chunks() -> None:

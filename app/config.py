@@ -40,7 +40,7 @@ def load_settings() -> Settings:
     load_dotenv(ROOT / ".env")
     with (ROOT / "config" / "settings.yaml").open(encoding="utf-8") as handle:
         raw = yaml.safe_load(handle)
-    chroma_path = Path(raw["chroma_path"])
+    chroma_path = Path(os.getenv("CHROMA_PATH") or raw["chroma_path"])
     if not chroma_path.is_absolute():
         chroma_path = ROOT / chroma_path
     return Settings(

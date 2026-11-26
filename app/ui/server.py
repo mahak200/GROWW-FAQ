@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+import shutil
 from pathlib import Path
 
 import uvicorn
@@ -12,8 +14,8 @@ from pydantic import BaseModel
 
 from app.query.answer import answer
 from app.query.retrieve import load_manifest, check_index
-from app.ingest.embed import load_model
-from app.config import load_settings
+from app.ingest.embed import embed_query
+from app.config import ROOT, load_settings
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).resolve().parent / "templates"))
 EXAMPLES = (
@@ -31,14 +33,25 @@ app = FastAPI(
 NO_STORE = {"Cache-Control": "no-store"}
 
 
+def _prepare_vercel_paths() -> None:
+    """Copy the bundled Chroma index to writable storage on Vercel."""
+    if not os.getenv("VERCEL"):
+        return
+    target = Path("/tmp/groww/chroma")
+    if not target.exists():
+        shutil.copytree(ROOT / "data" / "chroma", target)
+    os.environ["CHROMA_PATH"] = str(target)
+
+
 @app.on_event("startup")
 def _warmup() -> None:
-    """Preload embedding model and validate index to reduce first-request latency."""
+    """Preload the ONNX embedding model and validate the index."""
     try:
+        _prepare_vercel_paths()
         settings = load_settings()
         manifest = load_manifest()
         check_index(settings, manifest)
-        load_model(settings.embedding_model)
+        embed_query("warmup", settings.embedding_model)
     except Exception:
         # Keep server up; /ask returns explicit retrieval/generation errors.
         pass

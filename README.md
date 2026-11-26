@@ -20,7 +20,7 @@ Facts-only RAG prototype for Aditya Birla Sun Life AMC scheme questions. Answers
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 ```
 
 ### 2. Configure environment variables
@@ -85,6 +85,14 @@ UI behavior:
 - Exactly one citation link
 - `Last updated from sources: <date>` line
 - Advice/performance/PII requests are refused politely
+
+## Deploy to Vercel
+
+- Runtime dependencies are in `requirements.txt`; `sentence-transformers` is only needed locally for ingestion (`requirements-dev.txt`).
+- Commit the tracked artifacts `data/chroma/`, `data/manifest.json`, and `data/onnx_models/` so the deployed function can answer without rebuilding the index.
+- Set project environment variables `GROQ_API_KEY` and `GROQ_MODEL`.
+- Set `VERCEL_SUPPORT_LARGE_FUNCTIONS=1` if your project is not already enrolled in Large Functions and the build reports a bundle-size error.
+- `vercel.json` excludes `.venv`, tests, docs, and raw/chunk/embedding artifacts from the function bundle.
 
 ## Tests
 

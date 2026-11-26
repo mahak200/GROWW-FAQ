@@ -1,10 +1,10 @@
+chromadb==1.5.9
+fastapi
+uvicorn
+jinja2
+pydantic
 httpx
 beautifulsoup4
 pyyaml
 python-dotenv
-sentence-transformers
-chromadb
 groq
-fastapi
-uvicorn
-jinja2

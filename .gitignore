@@ -7,5 +7,4 @@ venv/
 data/raw/
 data/chunks/
 data/embeddings/
-data/chroma/
-data/manifest.json
+data/onnx_models/**/onnx.tar.gz

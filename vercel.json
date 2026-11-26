@@ -1,1 +1,15 @@
-﻿{"version":2,"builds":[{"src":"app/ui/server.py","use":"@vercel/python"}],"routes":[{"src":"/(.*)","dest":"app/ui/server.py"}]}
+{
+  "version": 2,
+  "builds": [
+    { "src": "app/ui/server.py", "use": "@vercel/python" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "app/ui/server.py" }
+  ],
+  "functions": {
+    "app/ui/server.py": {
+      "maxDuration": 300,
+      "excludeFiles": "{.git/**,.venv/**,tests/**,Doc/**,data/raw/**,data/chunks/**,data/embeddings/**,**/__pycache__/**,**/*.pyc,**/kubernetes/**,**/chromadb/test/**,**/pip/**,**/setuptools/**,**/wheel/**}"
+    }
+  }
+}

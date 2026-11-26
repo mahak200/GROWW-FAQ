@@ -1,0 +1,12 @@
+{
+  "fetched_on": "2026-11-25",
+  "page_ids": [
+    "amc",
+    "large_cap",
+    "flexi_cap",
+    "elss",
+    "mid_cap"
+  ],
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "collection_name": "mf_faq"
+}
