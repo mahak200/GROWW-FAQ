@@ -1,0 +1,134 @@
+# role ingest: scraped. role reference: cited on refusals, never scraped.
+# use: factsheet | education | statement
+
+- page_id: amc
+  role: ingest
+  scheme_name: Aditya Birla Sun Life AMC Ltd
+  title: Aditya Birla Sun Life AMC Ltd
+  url: https://groww.in/stocks/aditya-birla-sun-life-amc-ltd
+  use:
+
+- page_id: large_cap
+  role: ingest
+  scheme_name: Aditya Birla Sun Life Large Cap Fund Direct Growth
+  title: Aditya Birla Sun Life Large Cap Fund Direct Growth
+  url: https://groww.in/mutual-funds/aditya-birla-sun-life-large-cap-direct-fund-growth
+  use:
+
+- page_id: flexi_cap
+  role: ingest
+  scheme_name: Aditya Birla Sun Life Flexi Cap Direct Plan Growth
+  title: Aditya Birla Sun Life Flexi Cap Direct Plan Growth
+  url: https://groww.in/mutual-funds/birla-sun-life-equity-fund-direct-growth
+  use:
+
+- page_id: elss
+  role: ingest
+  scheme_name: Aditya Birla Sun Life ELSS Tax Saver Fund Direct Plan Growth
+  title: Aditya Birla Sun Life ELSS Tax Saver Fund Direct Plan Growth
+  url: https://groww.in/mutual-funds/aditya-birla-sun-life-elss-tax-saver-direct-growth
+  use:
+
+- page_id: mid_cap
+  role: ingest
+  scheme_name: Aditya Birla Sun Life Mid Cap Fund Direct Growth
+  title: Aditya Birla Sun Life Mid Cap Fund Direct Growth
+  url: https://groww.in/mutual-funds/birla-sun-life-mid-cap-fund-plan-a-direct-growth
+  use:
+
+# Combined AMC factsheet index. One page covers every scheme in this catalog.
+- role: reference
+  scheme_name: Aditya Birla Sun Life Large Cap Fund Direct Growth
+  title: Aditya Birla Sun Life Mutual Fund factsheets
+  url: https://mutualfund.adityabirlacapital.com/forms-and-downloads/factsheets
+  use: factsheet
+
+- role: reference
+  scheme_name: Aditya Birla Sun Life Flexi Cap Direct Plan Growth
+  title: Aditya Birla Sun Life Mutual Fund factsheets
+  url: https://mutualfund.adityabirlacapital.com/forms-and-downloads/factsheets
+  use: factsheet
+
+- role: reference
+  scheme_name: Aditya Birla Sun Life ELSS Tax Saver Fund Direct Plan Growth
+  title: Aditya Birla Sun Life Mutual Fund factsheets
+  url: https://mutualfund.adityabirlacapital.com/forms-and-downloads/factsheets
+  use: factsheet
+
+- role: reference
+  scheme_name: Aditya Birla Sun Life Mid Cap Fund Direct Growth
+  title: Aditya Birla Sun Life Mutual Fund factsheets
+  url: https://mutualfund.adityabirlacapital.com/forms-and-downloads/factsheets
+  use: factsheet
+
+- role: reference
+  scheme_name: Aditya Birla Sun Life Large Cap Fund Direct Growth
+  title: Aditya Birla Sun Life Large Cap Fund
+  url: https://mutualfund.adityabirlacapital.com/products/wealth-creation-solutions/aditya-birla-sun-life-large-cap-fund
+  use: education
+
+- role: reference
+  scheme_name: Aditya Birla Sun Life Flexi Cap Direct Plan Growth
+  title: Aditya Birla Sun Life Flexi Cap Fund
+  url: https://mutualfund.adityabirlacapital.com/products/wealth-creation-solutions/aditya-birla-sun-life-flexi-cap-fund
+  use: education
+
+- role: reference
+  scheme_name: Aditya Birla Sun Life ELSS Tax Saver Fund Direct Plan Growth
+  title: Aditya Birla Sun Life ELSS Tax Saver Fund
+  url: https://mutualfund.adityabirlacapital.com/products/tax-saving-solutions/aditya-birla-sun-life-elss-tax-saver-fund
+  use: education
+
+- role: reference
+  scheme_name: Aditya Birla Sun Life Mid Cap Fund Direct Growth
+  title: Aditya Birla Sun Life Midcap Fund
+  url: https://mutualfund.adityabirlacapital.com/products/wealth-creation-solutions/aditya-birla-sun-life-midcap-fund
+  use: education
+
+- role: reference
+  scheme_name: Aditya Birla Sun Life ELSS Tax Saver Fund Direct Plan Growth
+  title: Scheme Information Document — Aditya Birla Sun Life ELSS Tax Saver Fund
+  url: https://mutualfund.adityabirlacapital.com/-/media/bsl/files/resources/forms/sid----scheme-information-documents/sid---aditya-birla-sun-life-elss-tax-saver-fund-130826.pdf
+  use: education
+
+- role: reference
+  scheme_name: Aditya Birla Sun Life Mid Cap Fund Direct Growth
+  title: Aditya Birla Sun Life Midcap Fund
+  url: https://mutualfund.adityabirlacapital.com/empower/equity-funds/Midcap-Fund.html
+  use: education
+
+- role: reference
+  scheme_name: Aditya Birla Sun Life Flexi Cap Direct Plan Growth
+  title: Aditya Birla Sun Life Flexi Cap Fund
+  url: https://mutualfund.adityabirlacapital.com/empower/equity-funds/Flexi-Cap-Fund.html
+  use: education
+
+- role: reference
+  scheme_name:
+  title: How to download a capital gains report
+  url: https://groww.in/help/mutual-funds/mf-others/how-to-download-capital-gain-report--50
+  use: statement
+
+- role: reference
+  scheme_name:
+  title: Aditya Birla Sun Life Mutual Fund
+  url: https://mutualfund.adityabirlacapital.com/
+  use: education
+
+- role: reference
+  scheme_name:
+  title: Association of Mutual Funds in India
+  url: https://www.amfiindia.com/
+  use: education
+
+- role: reference
+  scheme_name:
+  title: SEBI investor website
+  url: https://investor.sebi.gov.in/
+  use: education
+
+- role: reference
+  scheme_name:
+  title: SEBI mutual fund disclosures
+  url: https://www.sebi.gov.in/sebiweb/home/HomeAction.do?doListing=yes&sid=3&ssid=22&smid=0
+  use: education

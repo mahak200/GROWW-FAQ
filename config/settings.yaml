@@ -1,0 +1,7 @@
+embedding_model: sentence-transformers/all-MiniLM-L6-v2
+chroma_path: data/chroma
+collection_name: mf_faq
+chunk_max_chars: 1200
+chunk_overlap_chars: 150
+top_k: 4
+max_distance: 0.55
