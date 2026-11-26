@@ -88,7 +88,7 @@ UI behavior:
 
 ## Deploy to Vercel
 
-- Runtime dependencies are in `requirements.txt`; `sentence-transformers` is only needed locally for ingestion (`requirements-dev.txt`).
+- The Vercel entrypoint is `api/index.py`; runtime dependencies are in `requirements.txt`, while `sentence-transformers` is only needed locally for ingestion (`requirements-dev.txt`).
 - Commit the tracked artifacts `data/chroma/`, `data/manifest.json`, and `data/onnx_models/` so the deployed function can answer without rebuilding the index.
 - Set project environment variables `GROQ_API_KEY` and `GROQ_MODEL`.
 - Set `VERCEL_SUPPORT_LARGE_FUNCTIONS=1` if your project is not already enrolled in Large Functions and the build reports a bundle-size error.
