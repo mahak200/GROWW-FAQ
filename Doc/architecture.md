@@ -202,6 +202,10 @@ The prompt tells the model to:
 
 The model returns sentences only. It does not choose the URL.
 
+Before the call, the composer reduces each prompt chunk to line windows around the fact label being asked. Generic definition lines such as `A fee payable...` and windows with no value are dropped, and peer-fund comparison tables stay out of the prompt. This prevents a definition example or another fund's number from being treated as the named scheme's fact.
+
+After the call, every number in the generated text is checked against the numbers in the supplied windows. If any number is absent, the answer is replaced with the failure text instead of being shown. This is a second gate after the prompt, because a fluent answer can still contain a wrong figure.
+
 ### 5.4 Composer
 
 The composer builds the payload the UI shows.
@@ -308,6 +312,8 @@ User questions are held in memory for the request and then dropped. A refusal tr
 | Groq error or timeout | UI reports that an answer could not be generated. It does not invent the fact. |
 | `/ask` non-2xx or network failure | UI shows the fixed error card and no source link. No partial answer is rendered. |
 | Stitch mock data left in the page | Not allowed. Price cards, tickers, buy/sell CTAs, and the hard-coded `stockKnowledge` table belong to the design export only and are not served. |
+| Generated number is absent from the supplied fact windows | Answer replaced with the failure text. No invented figure reaches the UI. |
+| Definition or peer-fund value could satisfy the question | Definition windows are dropped before generation; the scheme-specific value is used. |
 | Model names a URL | Ignored. The composer uses metadata. |
 | Embedding model in config differs from the vectors already stored | Query refuses to run until ingestion is repeated with the current config. The manifest stores the model name used at embed time so this check is explicit. |
 

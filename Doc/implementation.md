@@ -131,7 +131,10 @@ Re-running index replaces the collection. Set `manifest.collection_name`. If `ma
    - Otherwise it is a fact question.
 2. **Index check.** If Chroma is missing, or the manifest model or collection does not match config, return an error. Do not guess.
 3. **Retrieve.** Embed the question with the ingest model. Query the same collection for `top_k`. Drop hits farther than `max_distance`.
-4. **Generate.** Call Groq only when the gate says fact and at least one hit remains. Send chunk text only, not URLs. Temperature 0. At most 3 sentences. If the fact is not in the chunks, the model replies `NOT_IN_SOURCES`.
+4. **Generate.** Call Groq only when the gate says fact and at least one hit remains.
+   - Build the prompt context with `_ground_text`: for the asked fact labels, take line windows around each label (two lines before, four lines after). Skip windows containing definition markers such as `a fee payable` and windows with no value. Peer-fund comparison tables are not included because they are outside those windows.
+   - Send that context only, not URLs. Temperature 0. At most 3 sentences. If the fact is not in the text, the model replies `NOT_IN_SOURCES`.
+   - Run `_supported` on the generated text: every number in the reply must appear in the supplied context. If any number is missing, return `FAILURE_TEXT` with the source URL. Do not show a figure the retrieved text does not contain.
 5. **Attach the link in code**, not from the model.
    - Fact: first hit’s `url`.
    - Fact missing: that scheme’s page, or the AMC page.
@@ -208,6 +211,8 @@ The gate is code, not a prompt. Groq must not be called for a refusal. Patch the
 | Model mismatch | Change embedding model in config without re-indexing | Error: re-run ingestion |
 | Scrape failure | One of the five URLs returns non-200 | Pipeline stops. No substitute page |
 | Extra URL | Catalog has a sixth `ingest` row | Scraper refuses to run |
+| Definition value used | Answer quotes an `Understand terms` example (for example `1% within 90 days` as a universal rule) | Only the scheme's own fact window is sent; definitions are dropped |
+| Wrong number | Generated figure is absent from the supplied window | `FAILURE_TEXT`, no invented figure in the UI |
 | Model types a URL | Groq output contains a link | Link removed. The shown URL is chunk metadata |
 | Stitch mock data | `stockKnowledge`, a ticker, or a price card in the page | Not served. Only corpus-backed facts appear |
 | Live feed claim | `live`, `real-time`, or `Groww Live` copy in the page | Not served. Only the manifest fetch date appears |

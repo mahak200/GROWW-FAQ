@@ -23,11 +23,28 @@ ABSENT_TEXT = "That fact is not in this corpus. Please check the official page f
 FAILURE_TEXT = "An answer could not be generated from the retrieved text. Please try again or check the official scheme page."
 SYSTEM_PROMPT = (
     "Answer the single factual question using only the supplied source text. "
+    "Use the value stated for the named scheme, not a definition or another fund's value. "
     "Reply in at most three sentences. If the fact is not in the text, reply exactly NOT_IN_SOURCES. "
     "Give no advice, no performance comparison, and no URLs."
 )
 URL_PATTERN = re.compile(r"https?://\S+|www\.\S+", re.IGNORECASE)
 SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+")
+NUMBER_PATTERN = re.compile(r"(?<![\w])₹?\s*(\d[\d,]*(?:\.\d+)?)\s*%?")
+DEFINITION_MARKERS = (
+    "a fee payable",
+    "a percentage of your capital gains",
+    "a form of tax payable",
+    "average of the yearly returns",
+    "the total return of a mutual fund",
+)
+GROUND_PATTERNS: dict[str, re.Pattern[str]] = {
+    "expense ratio": re.compile(r"\bexpense\s+ratio\b", re.IGNORECASE),
+    "exit load": re.compile(r"\bexit\s+load\b", re.IGNORECASE),
+    "minimum sip": re.compile(r"\b(?:minimum\s+sip|min\.?\s+for\s+sip)\b", re.IGNORECASE),
+    "lock-in": re.compile(r"\block[\s-]?in\b", re.IGNORECASE),
+    "riskometer": re.compile(r"\b(?:riskometer|very\s+high\s+risk|high\s+risk|moderate\s+risk|low\s+risk)\b", re.IGNORECASE),
+    "benchmark": re.compile(r"\b(?:fund\s+benchmark|benchmark)\b", re.IGNORECASE),
+}
 
 
 def answer(question: str) -> dict[str, str]:
@@ -47,12 +64,16 @@ def answer(question: str) -> dict[str, str]:
         return _payload(ABSENT_TEXT, _absent_url(question), fetched_on)
 
     source = _best_source(question, hits)
-    generated = _generate(question, [source] + [h for h in hits if h.chunk_id != source.chunk_id][:2], settings)
+    prompt_hits = [source] + [h for h in hits if h.chunk_id != source.chunk_id][:2]
+    context = _ground_text(question, prompt_hits)
+    generated = _generate(question, context, settings)
     if generated is None:
         return _payload(FAILURE_TEXT, source.url, fetched_on)
     generated = _limit(generated)
     if "NOT_IN_SOURCES" in generated.upper():
         return _payload(ABSENT_TEXT, _absent_url(question), fetched_on)
+    if not _supported(generated, "\n".join(context)):
+        return _payload(FAILURE_TEXT, source.url, fetched_on)
     return _payload(generated, source.url, fetched_on)
 
 
@@ -123,7 +144,39 @@ def _url_for_use(use: str, page_id: str | None) -> str:
     return _url_for_page("amc")
 
 
-def _generate(question: str, hits: list[Hit], settings: Settings) -> str | None:
+def _ground_text(question: str, hits: list[Hit]) -> list[str]:
+    """Keep only fact windows that carry a value, not definitions or peer tables."""
+    asked = [name for name, pattern in FACT_HINTS if pattern.search(question)]
+    if not asked:
+        return [hit.text for hit in hits]
+    contexts: list[str] = []
+    for hit in hits:
+        lines = hit.text.splitlines()
+        windows: list[str] = []
+        for name in asked:
+            pattern = GROUND_PATTERNS.get(name)
+            if pattern is None:
+                continue
+            for match in pattern.finditer(hit.text):
+                index = hit.text.count("\n", 0, match.start())
+                window = "\n".join(lines[max(0, index - 2) : index + 4]).strip()
+                lowered = window.lower()
+                if any(marker in lowered for marker in DEFINITION_MARKERS):
+                    continue
+                if VALUE_RE.search(window) and window not in windows:
+                    windows.append(window)
+        if windows:
+            contexts.append("\n\n".join(windows[:4]))
+    return contexts
+
+
+def _supported(text: str, context: str) -> bool:
+    """Reject an answer that states a number absent from the supplied context."""
+    source_numbers = {match.group(1).replace(",", "") for match in NUMBER_PATTERN.finditer(context)}
+    return all(match.group(1).replace(",", "") in source_numbers for match in NUMBER_PATTERN.finditer(text))
+
+
+def _generate(question: str, contexts: list[str], settings: Settings) -> str | None:
     if not settings.groq_api_key or not settings.groq_model:
         return None
     try:
@@ -139,7 +192,7 @@ def _generate(question: str, hits: list[Hit], settings: Settings) -> str | None:
                     "content": "Question: "
                     + question
                     + "\n\nSource text:\n"
-                    + "\n\n".join(hit.text for hit in hits),
+                    + "\n\n".join(contexts),
                 },
             ],
             temperature=0,

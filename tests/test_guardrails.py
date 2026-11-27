@@ -119,6 +119,21 @@ class AnswerTests(unittest.TestCase):
         self.assertNotIn("example.com", body)
         self.assertLessEqual(len(re.split(r"(?<=[.!?])\s+", body)), 3)
 
+    def test_grounding_excludes_definitions_and_peer_values(self) -> None:
+        hits = retrieve("Expense ratio of the Large Cap fund?", self.settings, self.manifest)
+        context = "\n".join(answer_module._ground_text("Expense ratio of the Large Cap fund?", hits[:2]))
+        self.assertIn("1.03%", context)
+        self.assertNotIn("A fee payable", context)
+        self.assertNotIn("Invesco India", context)
+
+    def test_unsupported_number_is_rejected(self) -> None:
+        question = "Exit load of the Flexi Cap fund?"
+        with patch.object(answer_module, "_generate", return_value="Exit load is 2% within 30 days."):
+            payload = answer(question)
+        self.assertIn("could not be generated", self.first_line(payload))
+        self.assertTrue(answer_module._supported("Exit load is 1% within 90 days.", "Exit load of 1%, if redeemed within 90 days."))
+        self.assertFalse(answer_module._supported("Minimum SIP is ₹100.", "Min. for 1st investment\n₹1,000"))
+
     def test_absent_fact_uses_corpus_wording(self) -> None:
         with patch.object(answer_module, "_generate", return_value="NOT_IN_SOURCES"):
             payload = answer("Expense ratio of HDFC Top 100?")
