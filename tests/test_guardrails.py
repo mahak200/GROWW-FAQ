@@ -219,6 +219,21 @@ class UiTests(unittest.TestCase):
         self.assertNotIn("chunk_id", html.lower())
         self.assertEqual(client.get("/docs").status_code, 404)
 
+    def test_stitch_ui_contract(self) -> None:
+        html = TestClient(ui_app).get("/").text
+        for expected in (
+            "Aditya Birla Fund Facts",
+            "Approved Groww source pages",
+            "Reading approved sources...",
+            "Last updated from sources:",
+            'id="answer-card-template"',
+        ):
+            with self.subTest(expected=expected):
+                self.assertIn(expected, html)
+        for forbidden in ("stockKnowledge", "Groww Live", "₹", "52-week", "arrow_drop_up"):
+            with self.subTest(forbidden=forbidden):
+                self.assertNotIn(forbidden, html)
+
     def test_ask_returns_answer_fields(self) -> None:
         payload = {
             "text": "The expense ratio is 1.03%.\nLast updated from sources: 2026-11-25",

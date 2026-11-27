@@ -2,186 +2,269 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mutual fund facts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="shell-type" content="mobile_blank">
+  <meta name="description" content="Facts-only mutual fund FAQ for Aditya Birla Sun Life schemes.">
+  <title>Aditya Birla Fund Facts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-container-high": "#e1e8fd", "primary-fixed": "#f2daff", "surface-variant": "#dce2f7", "on-error": "#ffffff", "outline": "#7d7482", "tertiary": "#570007", "on-primary-container": "#ca8efc", "on-tertiary-container": "#ff837c", "surface-dim": "#d3daef", "on-background": "#141b2b", "secondary-container": "#59fdc5", "surface-bright": "#f9f9ff", "background": "#f9f9ff", "surface-container-highest": "#dce2f7", "inverse-surface": "#293040", "primary-container": "#581c87", "on-secondary-fixed-variant": "#00513b", "on-tertiary-fixed": "#410004", "error-container": "#ffdad6", "secondary": "#006c4f", "surface-container": "#e9edff", "on-secondary-fixed": "#002116", "tertiary-container": "#80000f", "tertiary-fixed": "#ffdad7", "primary-fixed-dim": "#e0b6ff", "primary": "#3e0069", "on-tertiary": "#ffffff", "surface-tint": "#7c43ab", "error": "#ba1a1a", "surface": "#f9f9ff", "on-primary-fixed-variant": "#632892", "on-secondary": "#ffffff", "inverse-primary": "#e0b6ff", "on-primary": "#ffffff", "on-tertiary-fixed-variant": "#930013", "on-error-container": "#93000a", "surface-container-lowest": "#ffffff", "inverse-on-surface": "#edf0ff", "secondary-fixed": "#59fdc5", "outline-variant": "#cfc2d2", "on-surface-variant": "#4c4451", "tertiary-fixed-dim": "#ffb3ad", "on-surface": "#141b2b", "secondary-fixed-dim": "#2fe0aa", "surface-container-low": "#f1f3ff", "on-secondary-container": "#007354", "on-primary-fixed": "#2d004f" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "gutter": "0.75rem", "space-lg": "1rem", "space-md": "0.75rem", "space-xs": "0.25rem", "margin": "1rem", "space-sm": "0.5rem", "space-xl": "1.5rem" }, fontFamily: { "body-lg": ["Inter"], "headline-sm": ["Inter"], "headline-lg": ["Inter"], "label-lg": ["Inter"], "headline-md": ["Inter"], "headline-lg-mobile": ["Inter"], "body-md": ["Inter"], "label-sm": ["Inter"], "numeric-ticker": ["Inter"], "body-sm": ["Inter"], "label-md": ["Inter"] }, fontSize: { "body-lg": ["15px", { "lineHeight": "22px", "letterSpacing": "-0.005em", "fontWeight": "400" }], "headline-sm": ["17px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "label-lg": ["13px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "600" }], "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "500" }], "numeric-ticker": ["16px", { "lineHeight": "20px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }], "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }] } } } };</script>
   <style>
-    :root { color-scheme: light; }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: #eef2f7;
-      color: #17212f;
-      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-      line-height: 1.5;
-    }
-    main {
-      width: min(44rem, calc(100% - 2rem));
-      margin: 3rem auto;
-      padding: 2rem;
-      background: #fff;
-      border: 1px solid #dce3ec;
-      border-radius: 14px;
-      box-shadow: 0 8px 28px rgba(23, 33, 47, .08);
-    }
-    h1 { margin: 0 0 .75rem; font-size: 1.5rem; }
-    .note {
-      display: inline-block;
-      margin: 0;
-      padding: .35rem .7rem;
-      border-radius: 999px;
-      background: #fff4dd;
-      color: #7a4b00;
-      font-size: .9rem;
-      font-weight: 700;
-    }
-    .label {
-      display: block;
-      margin: 1.5rem 0 .5rem;
-      font-size: .8rem;
-      font-weight: 700;
-      letter-spacing: .04em;
-      text-transform: uppercase;
-      color: #5c6b80;
-    }
-    .examples { display: flex; flex-wrap: wrap; gap: .5rem; }
-    .example {
-      padding: .55rem .9rem;
-      border: 1px solid #c8d2e0;
-      border-radius: 999px;
-      background: #f8fafc;
-      color: #24364f;
-      font: inherit;
-      font-size: .9rem;
-      cursor: pointer;
-    }
-    .example:hover:not(:disabled) { border-color: #2b6cb0; color: #2b6cb0; }
-    form { display: flex; gap: .5rem; margin-top: .5rem; }
-    input {
-      flex: 1;
-      min-width: 0;
-      padding: .75rem .9rem;
-      border: 1px solid #c8d2e0;
-      border-radius: 8px;
-      font: inherit;
-    }
-    input:focus, button:focus-visible { outline: 2px solid #2b6cb0; outline-offset: 2px; }
-    button:disabled { opacity: .6; cursor: not-allowed; }
-    .submit {
-      padding: .75rem 1.25rem;
-      border: 0;
-      border-radius: 8px;
-      background: #2b6cb0;
-      color: #fff;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .submit:hover:not(:disabled) { background: #245a92; }
-    #response {
-      margin-top: 1.5rem;
-      padding: 1rem 1.1rem;
-      border-left: 4px solid #2b6cb0;
-      border-radius: 8px;
-      background: #f0f7ff;
-    }
-    #answer { margin: 0; white-space: pre-line; }
-    .source { margin: .85rem 0 0; font-size: .9rem; }
-    #source { color: #2b6cb0; font-weight: 600; }
-    #updated { margin: .5rem 0 0; color: #5c6b80; font-size: .85rem; }
-    #error {
-      margin: 1.25rem 0 0;
-      padding: .8rem 1rem;
-      border-radius: 8px;
-      background: #fff0f0;
-      color: #a12b2b;
-    }
-    [hidden] { display: none !important; }
+    @layer base{html,body{width:100%;min-height:100vh;margin:0;padding:0;background-color:#f9f9ff;}body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}
+    ::-webkit-scrollbar{display:none;}
+    .example{display:flex;gap:.5rem;align-items:flex-start;text-align:left;padding:.5rem;border:1px solid #e5e7eb;border-radius:.5rem;background:#fff;color:#374151;box-shadow:0 1px 2px rgba(17,24,39,.05);transition:all .15s ease;cursor:pointer;}
+    .example:hover:not(:disabled){background:#e9edff;}
+    .example:active:not(:disabled){transform:scale(.99);}
+    .example:disabled{opacity:.6;cursor:not-allowed;}
+    .scope-pill{white-space:nowrap;}
+    .answer-text{white-space:pre-line;font-variant-numeric:tabular-nums;}
+    .animate-fadeIn{animation:fadeIn .18s ease-out;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+    [hidden]{display:none!important;}
+    button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid #581c87;outline-offset:2px;}
   </style>
 </head>
-<body>
-  <main>
-    <h1>Mutual fund facts for Aditya Birla Sun Life schemes.</h1>
-    <p class="note">Facts-only. No investment advice.</p>
-
-    <span class="label" id="examples-label">Try an example</span>
-    <div class="examples" aria-labelledby="examples-label">
-      {% for example in examples %}
-      <button type="button" class="example">{{ example }}</button>
-      {% endfor %}
+<body class="bg-surface text-on-surface font-body-md text-body-md min-h-screen flex flex-col antialiased">
+  <header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+    <div class="h-16 px-margin flex items-center justify-between max-w-[480px] mx-auto w-full">
+      <div class="flex items-center gap-space-sm">
+        <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-on-primary text-[22px]">insights</span>
+        </div>
+        <div class="flex flex-col min-w-0">
+          <h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate">Aditya Birla Fund Facts</h1>
+          <p class="font-label-sm text-label-sm text-on-surface-variant truncate">Aditya Birla Sun Life schemes only</p>
+        </div>
+      </div>
+      <button id="new-chat" aria-label="New Chat" class="min-w-[44px] min-h-[44px] px-space-sm py-space-xs rounded-full bg-surface-container-low hover:bg-surface-container text-primary flex items-center justify-center gap-space-xs transition-colors shrink-0" type="button">
+        <span class="material-symbols-outlined text-[20px]">add</span>
+        <span class="font-label-md text-label-md hidden sm:inline">New</span>
+      </button>
     </div>
+  </header>
 
-    <label class="label" for="question">Ask a question</label>
-    <form id="ask-form">
-      <input id="question" name="question" type="text" autocomplete="off" placeholder="Ask a fund fact" required>
-      <button id="submit" class="submit" type="submit">Ask</button>
-    </form>
+  <main class="flex-1 flex flex-col relative w-full pt-16 bg-surface max-w-[480px] mx-auto">
+    <div class="flex flex-col w-full pb-40">
+      <section class="px-margin pt-space-md pb-space-sm flex flex-col gap-space-sm">
+        <div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-xs shadow-sm">
+          <div class="flex items-center gap-space-xs">
+            <span class="w-2 h-2 rounded-full bg-secondary-fixed animate-pulse"></span>
+            <span class="font-label-sm text-label-sm text-on-surface-variant font-medium tracking-wide uppercase">Approved Groww source pages</span>
+          </div>
+          <h2 class="font-headline-md text-headline-md text-on-surface tracking-tight">Mutual fund facts for Aditya Birla Sun Life schemes.</h2>
+          <p class="font-body-md text-body-md text-on-surface-variant">Five approved pages, one citation per answer. No advice, no quoted prices, no performance claims.</p>
+        </div>
 
-    <section id="response" aria-live="polite" hidden>
-      <p id="answer"></p>
-      <p class="source" id="source-row"><span>Source:</span> <a id="source" href="#" target="_blank" rel="noopener noreferrer"></a></p>
-      <p id="updated"></p>
-    </section>
+        <div class="flex flex-col gap-space-xs mt-space-xs">
+          <div class="flex items-center justify-between">
+            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Suggested Questions</span>
+            <span class="font-label-sm text-label-sm text-primary flex items-center gap-0.5">
+              <span class="material-symbols-outlined text-[14px]">touch_app</span> Tap to ask
+            </span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-space-xs" id="suggestions-container">
+            {% for example in examples %}
+            <button type="button" class="example" data-query="{{ example }}">
+              <span class="material-symbols-outlined text-primary text-[18px] mt-0.5">search</span>
+              <span class="font-label-md text-label-md text-on-surface">{{ example }}</span>
+            </button>
+            {% endfor %}
+          </div>
+        </div>
 
-    <p id="error" role="alert" hidden></p>
+        <div class="flex flex-col gap-space-xs mt-space-xs">
+          <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">In scope: five ingested pages</span>
+          <div class="flex gap-space-xs overflow-x-auto pb-space-xs no-scrollbar">
+            <span class="scope-pill px-space-sm py-1 rounded-full bg-surface-container-lowest text-on-surface font-label-sm text-label-sm shadow-sm">AMC overview</span>
+            <span class="scope-pill px-space-sm py-1 rounded-full bg-surface-container-lowest text-on-surface font-label-sm text-label-sm shadow-sm">Large Cap</span>
+            <span class="scope-pill px-space-sm py-1 rounded-full bg-surface-container-lowest text-on-surface font-label-sm text-label-sm shadow-sm">Flexi Cap</span>
+            <span class="scope-pill px-space-sm py-1 rounded-full bg-surface-container-lowest text-on-surface font-label-sm text-label-sm shadow-sm">ELSS</span>
+            <span class="scope-pill px-space-sm py-1 rounded-full bg-surface-container-lowest text-on-surface font-label-sm text-label-sm shadow-sm">Mid Cap</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="px-margin flex flex-col gap-space-lg mt-space-sm" id="chat-thread" aria-live="polite">
+        <div class="bg-surface-container-lowest text-on-surface rounded-xl p-space-md w-full shadow-sm flex items-start gap-space-sm" id="empty-state">
+          <span class="material-symbols-outlined text-primary text-[20px]">fact_check</span>
+          <div class="flex flex-col gap-space-xs">
+            <span class="font-headline-sm text-headline-sm">Ask a fund fact to begin</span>
+            <span class="font-body-sm text-body-sm text-on-surface-variant">Each reply shows one source link and when the sources were last read. Advice and returns questions are refused.</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-space-lg w-full" id="dynamic-messages"></div>
+        <div class="hidden flex items-center gap-space-sm py-space-xs" id="typing-indicator">
+          <div class="w-6 h-6 rounded-full bg-primary-container flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-surface-bright text-[14px]">insights</span>
+          </div>
+          <div class="bg-surface-container-lowest px-space-md py-space-sm rounded-xl shadow-sm flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-primary animate-bounce"></span>
+            <span class="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:0.15s]"></span>
+            <span class="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:0.3s]"></span>
+            <span class="font-label-sm text-label-sm text-on-surface-variant ml-2">Reading approved sources...</span>
+          </div>
+        </div>
+      </section>
+    </div>
   </main>
+
+  <div class="fixed bottom-0 left-0 right-0 z-40 bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_-4px_16px_rgba(17,24,39,0.05)] pb-safe">
+    <div class="max-w-[480px] mx-auto w-full px-margin pt-space-sm pb-space-sm flex flex-col gap-space-xs">
+      <form class="relative flex items-center w-full" id="chat-form">
+        <input autocomplete="off" class="w-full bg-surface-container-low text-on-surface font-body-md text-body-md rounded-full pl-space-md pr-12 py-3 focus:outline-none focus:bg-surface-container transition-colors shadow-inner" id="stock-query-input" placeholder="Ask about a fund fact..." type="text" required>
+        <button aria-label="Send Query" class="absolute right-1.5 w-9 h-9 rounded-full bg-primary-container hover:bg-primary text-surface-bright flex items-center justify-center transition-all active:scale-95 shrink-0" id="send-btn" type="submit">
+          <span class="material-symbols-outlined text-[18px]">arrow_upward</span>
+        </button>
+      </form>
+      <div class="flex flex-col items-center gap-0.5 text-center px-space-xs">
+        <span class="font-label-sm text-label-sm text-on-surface-variant">Press Enter to send • Aditya Birla Sun Life schemes only</span>
+        <span class="font-label-sm text-[10px] leading-tight text-outline truncate max-w-full">Facts-only. No investment advice.</span>
+      </div>
+    </div>
+  </div>
+
+  <template id="answer-card-template">
+    <div class="flex flex-col items-start gap-space-xs max-w-[92%] w-full animate-fadeIn">
+      <div class="flex items-center gap-space-xs">
+        <div class="w-6 h-6 rounded-full bg-primary-container flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-surface-bright text-[14px]">insights</span>
+        </div>
+        <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Groww source pages</span>
+      </div>
+      <div class="bg-surface-container-lowest text-on-surface rounded-xl p-space-md w-full shadow-sm flex flex-col gap-space-sm">
+        <div class="flex justify-between items-start">
+          <div class="flex flex-col">
+            <h3 class="font-headline-sm text-headline-sm text-on-surface">Answer</h3>
+            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">From approved corpus</span>
+          </div>
+          <span class="bg-surface-container px-2 py-0.5 rounded-full font-label-sm text-label-sm text-primary font-semibold">Facts only</span>
+        </div>
+        <div class="bg-surface-container-low rounded-lg p-space-sm">
+          <p class="answer-text font-body-md text-body-md text-on-surface leading-relaxed"></p>
+        </div>
+        <div class="flex items-center gap-1 text-primary">
+          <span class="material-symbols-outlined text-[14px]">link</span>
+          <a class="source-link font-label-sm text-label-sm font-semibold" target="_blank" rel="noopener noreferrer"></a>
+        </div>
+        <p class="updated font-label-sm text-label-sm text-on-surface-variant"></p>
+      </div>
+    </div>
+  </template>
+
   <script>
-    const form = document.getElementById('ask-form');
-    const input = document.getElementById('question');
-    const submit = document.getElementById('submit');
-    const examples = document.querySelectorAll('.example');
-    const response = document.getElementById('response');
-    const answerEl = document.getElementById('answer');
-    const source = document.getElementById('source');
-    const sourceRow = document.getElementById('source-row');
-    const updated = document.getElementById('updated');
-    const errorEl = document.getElementById('error');
+    (function () {
+      const thread = document.getElementById('dynamic-messages');
+      const emptyState = document.getElementById('empty-state');
+      const input = document.getElementById('stock-query-input');
+      const form = document.getElementById('chat-form');
+      const submit = document.getElementById('send-btn');
+      const typing = document.getElementById('typing-indicator');
+      const examples = document.querySelectorAll('.example');
+      const newChat = document.getElementById('new-chat');
+      const cardTemplate = document.getElementById('answer-card-template');
 
-    function setBusy(busy) {
-      input.disabled = busy;
-      submit.disabled = busy;
-      examples.forEach((button) => { button.disabled = busy; });
-    }
-
-    async function ask(question) {
-      const trimmed = question.trim();
-      if (!trimmed) return;
-      input.value = trimmed;
-      errorEl.hidden = true;
-      setBusy(true);
-      try {
-        const res = await fetch('/ask', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ question: trimmed })
-        });
-        if (!res.ok) throw new Error('Request failed');
-        const data = await res.json();
-        const body = String(data.text || '').replace(/\n?Last updated from sources:[\s\S]*$/, '').trimEnd();
-        const url = data.url || '';
-        answerEl.textContent = body;
-        source.textContent = url ? 'View source' : '';
-        source.href = url;
-        sourceRow.hidden = !url;
-        updated.textContent = 'Last updated from sources: ' + (data.fetched_on || 'unknown');
-        response.hidden = false;
-      } catch (err) {
-        response.hidden = true;
-        errorEl.textContent = 'An answer could not be generated. Please try again.';
-        errorEl.hidden = false;
-      } finally {
-        setBusy(false);
+      function setBusy(busy) {
+        input.disabled = busy;
+        submit.disabled = busy;
+        examples.forEach((button) => { button.disabled = busy; });
+        typing.classList.toggle('hidden', !busy);
       }
-    }
 
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      ask(input.value);
-    });
+      function scrollToBottom() {
+        setTimeout(function () {
+          window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+        }, 50);
+      }
 
-    examples.forEach((button) => {
-      button.addEventListener('click', () => ask(button.textContent));
-    });
+      function appendUserMessage(text) {
+        const bubble = document.createElement('div');
+        bubble.className = 'flex justify-end w-full animate-fadeIn';
+        const inner = document.createElement('div');
+        inner.className = 'bg-primary-container text-on-primary rounded-2xl rounded-tr-sm px-space-md py-space-sm max-w-[85%] shadow-sm';
+        const paragraph = document.createElement('p');
+        paragraph.className = 'font-body-md text-body-md text-surface-bright font-normal leading-relaxed';
+        paragraph.textContent = text;
+        inner.appendChild(paragraph);
+        bubble.appendChild(inner);
+        thread.appendChild(bubble);
+        emptyState.hidden = true;
+        scrollToBottom();
+      }
+
+      function appendErrorMessage() {
+        const bubble = document.createElement('div');
+        bubble.className = 'flex flex-col items-start gap-space-xs max-w-[92%] w-full animate-fadeIn';
+        const card = document.createElement('div');
+        card.className = 'bg-error-container text-on-error-container rounded-xl p-space-md w-full shadow-sm font-body-md text-body-md';
+        card.setAttribute('role', 'alert');
+        card.textContent = 'An answer could not be generated. Please try again.';
+        bubble.appendChild(card);
+        thread.appendChild(bubble);
+        emptyState.hidden = true;
+        scrollToBottom();
+      }
+
+      function appendAnswer(data) {
+        const card = cardTemplate.content.firstElementChild.cloneNode(true);
+        const lastUpdated = /\n?Last updated from sources:[\s\S]*$/;
+        const body = String(data.text || '').replace(lastUpdated, '').trimEnd();
+        card.querySelector('.answer-text').textContent = body;
+        const link = card.querySelector('.source-link');
+        const url = String(data.url || '');
+        if (/^https:\/\//i.test(url)) {
+          link.href = url;
+          link.textContent = 'View source';
+        } else {
+          link.hidden = true;
+        }
+        card.querySelector('.updated').textContent = 'Last updated from sources: ' + (data.fetched_on || 'unknown');
+        thread.appendChild(card);
+        emptyState.hidden = true;
+        scrollToBottom();
+      }
+
+      async function ask(question) {
+        const clean = String(question || '').trim();
+        if (!clean) return;
+        appendUserMessage(clean);
+        input.value = '';
+        setBusy(true);
+        try {
+          const res = await fetch('/ask', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: clean })
+          });
+          if (!res.ok) throw new Error('Request failed');
+          const data = await res.json();
+          appendAnswer({ text: data.text, url: data.url, fetched_on: data.fetched_on });
+        } catch (error) {
+          appendErrorMessage();
+        } finally {
+          setBusy(false);
+        }
+      }
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        ask(input.value);
+      });
+
+      examples.forEach(function (button) {
+        button.addEventListener('click', function () {
+          ask(button.getAttribute('data-query') || button.textContent);
+        });
+      });
+
+      newChat.addEventListener('click', function () {
+        thread.replaceChildren();
+        input.value = '';
+        emptyState.hidden = false;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    })();
   </script>
 </body>
 </html>

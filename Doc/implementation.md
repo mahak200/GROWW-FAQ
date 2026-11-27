@@ -2,9 +2,12 @@
 
 Build the FAQ assistant in this order. Each stage writes its own files. Do not fetch links inside the five pages. Do not call Groq while scraping or indexing.
 
+`Doc/architecture.md` and this file are the main source of truth for the prototype. The UI is built from `stitch_aditya_birla_stock_assistant.zip`, a Google Stitch export containing `code.html`, `DESIGN.md`, and `screen.png`. It is a design input only: take its tokens and component structure, then wire the page to this app's facts-only contract in section 7. Do not copy its mock stock prices, tickers, or `stockKnowledge` table into the app.
+
 ## 1. Directory structure
 
 ```text
+stitch_aditya_birla_stock_assistant.zip   # design input, not served or parsed at runtime
 app/
   config.py
   ingest/
@@ -139,17 +142,48 @@ Re-running index replaces the collection. Set `manifest.collection_name`. If `ma
 
 If Groq fails, say an answer could not be generated. Do not fill in a number.
 
-## 7. UI
+## 7. UI (Stitch-derived)
 
-`python -m app.ui.server` serves one page on `127.0.0.1:8000`.
+`python -m app.ui.server` serves one Jinja2 page on `127.0.0.1:8000`. The page lives in `app/ui/templates/index.html`; the server supplies `EXAMPLES` and calls `answer()`. No new runtime dependency is required beyond the existing FastAPI, Jinja2, and uvicorn stack; fonts and Tailwind are loaded by the browser from the same CDN links used in the Stitch export.
 
-- Welcome line: Mutual fund facts for Aditya Birla Sun Life schemes.
-- Always visible: `Facts-only. No investment advice.`
-- Three example buttons: expense ratio, ELSS lock-in, minimum SIP.
-- One input and submit. `POST /ask` calls `answer()` and returns `text`, `url`, and `fetched_on`.
-- Show the text, one link, and the last-updated line.
+### 7.1 Port from the Stitch export
 
-No login, no saved questions, and no chunk dump on the page. Reviewers look at `data/` for scrape, chunk, and embedding output.
+1. Unzip `stitch_aditya_birla_stock_assistant.zip`. Read `code.html` for structure and `DESIGN.md` for tokens. `screen.png` is a visual reference only.
+2. Keep the Stitch Tailwind config in the template head: the full `colors`, `spacing`, `borderRadius`, `fontFamily`, and `fontSize` token sets. Keep the Inter and Material Symbols font links and the `@layer base` rules for `pb-safe`, `pt-safe`, and hidden scrollbars.
+3. Keep these structures from `code.html`: fixed 480px header, mobile-first `<main>`, welcome banner, suggested-question grid, horizontally scrollable pill rail, chat feed with user and assistant bubbles, typing indicator, fixed bottom composer, and the New chat control.
+4. Rebind content to the corpus:
+   - Header title becomes `Aditya Birla Fund Facts`; subtitle names Aditya Birla Sun Life as the only AMC. Remove the profile avatar because there is no account.
+   - Welcome heading is exactly `Mutual fund facts for Aditya Birla Sun Life schemes.` The feed label is `Approved Groww source pages`, not a live market feed.
+   - Suggestions render from `{% for example in examples %}` with `data-query="{{ example }}"` and `class="example"`. The three values come from server `EXAMPLES`: Large Cap expense ratio, ELSS lock-in, Mid Cap minimum SIP.
+   - The pill rail lists the five ingested pages as static labels, not as stock tickers and not as fetch triggers.
+   - The empty state explains that each reply has one source link and a last-updated line, and that advice/returns questions are refused.
+5. Delete the export's sample messages, the `stockKnowledge` object, `resolveStockQuery`, price cards, P/E and market-cap grids, `+/-%` badges, `Groww Live` badges, `Source: Groww` text, and buy/sell CTA styling. Those values are mock data and conflict with the no-performance-claims rule.
+6. Build answer cards from a single `<template id="answer-card-template">`. Clone it per reply and set fields with `textContent`, not `innerHTML`, for user and answer text. The template owns the only source anchor.
+7. Add the request flow in section 7.2 and the guardrails in section 8.
+
+### 7.2 Request and render flow
+
+1. Submit or suggestion click calls `ask(question)`. Trim the value; if it is empty, return without a request.
+2. Append the user bubble, clear the input, disable input, submit, and examples, and show the typing indicator.
+3. `POST /ask` with `{"question": "<trimmed question>"}` using `Content-Type: application/json`. The server validates the field and returns `answer()`'s `text`, `url`, and `fetched_on`.
+4. On success, strip the trailing `Last updated from sources: ...` from `text`, put the remainder in `.answer-text`, and render the date from `fetched_on` in `.updated`. There is one source link per reply, shown only when `url` starts with `https://`.
+5. On non-2xx or network error, append a fixed error card. Do not render a partial answer or a link.
+6. Hide the typing indicator and re-enable controls in `finally`. New chat clears the client thread and restores the empty state.
+
+The server keeps no transcript, and the page posts nothing but the one question. No chunk IDs, distances, vectors, or other debug data appear in the page.
+
+### 7.3 Deliberate differences from the export
+
+| Stitch export | Served app |
+| --- | --- |
+| Live price and 52-week-high cards | One cited fact from the five-page corpus |
+| `Groww Live` and a market timestamp | `Last updated from sources: <manifest fetch date>` |
+| Six stock tickers in the pill rail | Five ingested Groww page labels |
+| Mock `stockKnowledge` answers | `POST /ask` to `answer()` |
+| `Fetching Groww data...` typing label | `Reading approved sources...` |
+| Buy/sell CTA tokens | Not used; the assistant never recommends a trade |
+
+Verify with `python -m unittest tests.test_guardrails.UiTests`. The page-contract test checks the welcome line, the exact disclaimer, three `class="example"` buttons, one `<a ` element, the `fetch('/ask'` call, the three consumed response fields, no chunk debug output, `Cache-Control: no-store`, and a 404 for `/docs`.
 
 ## 8. Guardrails — edge cases and tests
 
@@ -175,6 +209,10 @@ The gate is code, not a prompt. Groq must not be called for a refusal. Patch the
 | Scrape failure | One of the five URLs returns non-200 | Pipeline stops. No substitute page |
 | Extra URL | Catalog has a sixth `ingest` row | Scraper refuses to run |
 | Model types a URL | Groq output contains a link | Link removed. The shown URL is chunk metadata |
+| Stitch mock data | `stockKnowledge`, a ticker, or a price card in the page | Not served. Only corpus-backed facts appear |
+| Live feed claim | `live`, `real-time`, or `Groww Live` copy in the page | Not served. Only the manifest fetch date appears |
+| Client error | `/ask` returns non-2xx or the request fails | Fixed error card, no partial answer and no link |
+| New chat | User clears the thread | Client DOM only; no server call and no stored history |
 
 Also check:
 
@@ -183,3 +221,4 @@ Also check:
 - Collection count equals the number of chunks, and a second index run does not double it.
 - A fact answer’s number appears in the chunk for the URL shown.
 - The repo contains no API key. `GROQ_API_KEY` in `.env.example` is empty.
+- The served template matches section 6.2 of `Doc/architecture.md` and contains no hard-coded scheme facts or prices.

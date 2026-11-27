@@ -2,7 +2,11 @@
 
 ## Mutual Fund FAQ Assistant
 
-This document describes how the prototype in `Doc/PRD.md` is built. It is a single-process RAG demo: an offline ingestion pipeline writes inspectable artifacts, and a tiny UI answers from those artifacts. Nothing here is a production service.
+This document and `Doc/implementation.md` are the main source of truth for how the prototype in `Doc/PRD.md` is built. Code, tests, and the README follow them; they do not redefine the contract.
+
+The prototype is a single-process RAG demo: an offline ingestion pipeline writes inspectable artifacts, and a tiny UI answers from those artifacts. Nothing here is a production service.
+
+`stitch_aditya_birla_stock_assistant.zip` is the UI design input. It contains `code.html`, `DESIGN.md`, and `screen.png` from Google Stitch. It supplies layout, tokens, and component styling only. It is not a second specification, is not fetched or served at runtime, and contributes no data. The served UI is `app/ui/templates/index.html`, which is described in section 6.
 
 ## 1. System context
 
@@ -28,6 +32,7 @@ flowchart LR
 | User | UI only | Groww pages, Groq, Chroma, the filesystem |
 | Ingestion | The five seed URLs, the embedding model, local disk, Chroma | Any URL linked from those pages, Groq |
 | Query path | Embedding model, Chroma, Groq, the curated link list | The open web |
+| Stitch export | Design-time author of the UI template | Runtime requests, Groq, Chroma, the filesystem |
 
 Groq is used only at answer time. Ingestion does not call an LLM.
 
@@ -46,7 +51,7 @@ flowchart TB
   end
 
   subgraph online [Query]
-    ui[UI]
+    ui[Stitch-derived UI]
     gate[Policy gate]
     retrieve[Retrieve]
     compose[Compose answer or refusal]
@@ -74,7 +79,8 @@ There is no account store, no query log that keeps the raw question, and no seco
 | Policy gate | Runs before retrieval and before Groq. Classifies the question as fact, refusal, or personal-data. |
 | Retriever | Embeds the question with the same model and queries the same collection. |
 | Answer composer | Calls Groq only for an allowed factual question that has supporting chunks. Attaches one URL from chunk metadata and the manifest date. Refusals skip Groq. |
-| UI | Welcome line, three example questions, disclaimer, input, and the response. |
+| UI template | Stitch-derived single page in `app/ui/templates/index.html`. Renders welcome, suggestions, chat feed, composer, and persistent disclaimer. Calls `/ask` and renders only `text`, `url`, and `fetched_on`. |
+| UI server | FastAPI process that renders the template, validates the question, and calls `answer()`. Does not keep a transcript. |
 | Link catalog | URLs that may be cited. Ingested pages plus educational links. Educational links are never fetched or embedded. |
 
 ## 4. Ingestion pipeline
@@ -216,17 +222,42 @@ Refusals do not include numbers from the index.
 
 ## 6. UI
 
-One page.
+One page, derived from the Google Stitch export `stitch_aditya_birla_stock_assistant.zip`. `DESIGN.md` in that export is the source of the visual tokens; `code.html` is the source of the component structure. The served page is `app/ui/templates/index.html`, rendered by `app/ui/server.py` at `127.0.0.1:8000`. The three example questions come from `EXAMPLES` in the server, so the page is not a second source of question copy.
+
+### 6.1 Visual contract
+
+| Item | Value from the Stitch export |
+| --- | --- |
+| Surface | `#f9f9ff` canvas, `#ffffff` cards, `#e5e7eb`-style hairline borders |
+| Primary | `#581c87` Birla purple for user bubbles, active controls, and the assistant avatar |
+| Secondary | `#59fdc5` mint on positive indicators, used here only as a source-freshness dot |
+| Error | `#ba1a1a` / `#ffdad6` for the failed-answer card |
+| Type | Inter with `body-md` (14px), `label-sm` (11px), `headline-sm` (17px), `headline-md` (20px); tabular figures for any numbers |
+| Shape | 16px chat bubbles with one flattened anchor corner, 9999px chips and pills, 0.5rem small cards |
+| Layout | Mobile-first, centered 480px frame, 1rem gutters, fixed header and fixed bottom composer |
+| Depth | 1px borders; the bottom composer is the only surface with a soft upward shadow; no gradients |
+
+The Tailwind config in the template carries these tokens. `DESIGN.md` is the authority if a token is disputed.
+
+### 6.2 Regions
 
 | Region | Content |
 | --- | --- |
-| Welcome | Names the assistant and Aditya Birla Sun Life as the only AMC in scope. |
-| Examples | Three buttons that submit a factual question, for example expense ratio, ELSS lock-in, and minimum SIP. |
-| Disclaimer | Visible at all times: `Facts-only. No investment advice.` |
-| Composer | Text field and submit. |
-| Response | Answer or refusal, one link, last-updated line. |
+| Header | Assistant name, subtitle naming Aditya Birla Sun Life as the only AMC in scope, and a New chat control that clears only the client-side thread. No account or profile control. |
+| Welcome | `Mutual fund facts for Aditya Birla Sun Life schemes.` plus a note that answers come from five approved pages with one citation and no advice, quoted prices, or performance claims. |
+| Suggestions | Three buttons rendered from server `EXAMPLES`: Large Cap expense ratio, ELSS lock-in, Mid Cap minimum SIP. Clicking one submits that question. |
+| Scope ribbon | Static pills for the five ingested pages: AMC overview, Large Cap, Flexi Cap, ELSS, Mid Cap. They are labels, not data fetches. Unsupported stocks are not listed. |
+| Thread | Empty state before the first question; then alternating user bubbles and answer cards appended in the browser. |
+| Answer card | Assistant avatar, one answer body, one source link, and `Last updated from sources: <date>`. Refusals use the same shape. No stock price, ticker, P/E, market cap, or buy/sell CTA. |
+| Typing state | Shown between submit and response; label reads `Reading approved sources...`, never a live-feed claim. |
+| Composer | Text input and send button in the fixed bottom dock. Blank input never calls `/ask`. |
+| Disclaimer | Always visible in the bottom dock: `Facts-only. No investment advice.` |
 
-The page does not show chunk debug data. Reviewers inspect `data/` for the pipeline. The UI does not keep a transcript on the server.
+### 6.3 UI data contract
+
+The page calls `POST /ask` with `{"question": "..."}` and consumes exactly three fields: `text`, `url`, `fetched_on`. It strips the trailing `Last updated from sources:` line out of `text` and renders that line from `fetched_on`, so the date has one owner. The source anchor is built from `url` only when it is an `https://` URL; the server supplies it from the catalog, never from model output. A non-2xx response or network error renders a fixed error message and no invented answer.
+
+The transcript exists only in the browser DOM for the current page view. New chat clears it. Nothing is posted except the single question in `/ask`, and nothing is written to the server or to disk. The page does not show chunk IDs, distances, vectors, or any other debug data; reviewers inspect `data/` for the pipeline.
 
 ## 7. Configuration and secrets
 
@@ -235,6 +266,7 @@ The page does not show chunk debug data. Reviewers inspect `data/` for the pipel
 | Embedding model | Config file | Default `sentence-transformers/all-MiniLM-L6-v2` |
 | Chroma path and collection | Config file | Local directory |
 | Chunk maximum, overlap, top-k, distance threshold | Config file | Documented in the README |
+| UI design tokens and regions | Section 6; `DESIGN.md` in the Stitch export | Tailwind config and markup in `app/ui/templates/index.html` |
 | Five ingest URLs and page IDs | Config or checked-in catalog | Loader will not accept extra URLs |
 | Educational and factsheet URLs | Link catalog | Not ingested |
 | `GROQ_MODEL` | `.env` | Brief names `qwen/qwen3.8-27b`; the value in `.env` wins |
@@ -274,6 +306,8 @@ User questions are held in memory for the request and then dropped. A refusal tr
 | A seed URL fails during load | Ingestion stops with that URL and status. The index is not silently filled from another site. |
 | Chroma directory missing at query time | UI reports that ingestion has not been run. |
 | Groq error or timeout | UI reports that an answer could not be generated. It does not invent the fact. |
+| `/ask` non-2xx or network failure | UI shows the fixed error card and no source link. No partial answer is rendered. |
+| Stitch mock data left in the page | Not allowed. Price cards, tickers, buy/sell CTAs, and the hard-coded `stockKnowledge` table belong to the design export only and are not served. |
 | Model names a URL | Ignored. The composer uses metadata. |
 | Embedding model in config differs from the vectors already stored | Query refuses to run until ingestion is repeated with the current config. The manifest stores the model name used at embed time so this check is explicit. |
 
@@ -288,4 +322,5 @@ User questions are held in memory for the request and then dropped. A refusal tr
 | Refuse advice and returns | Policy gate, before Groq |
 | No PII storage | Gate drops the question; no query log |
 | Config-swappable embedder and Chroma | Config file, shared by ingest and query |
+| Stitch-derived UI, three examples, disclaimer | Section 6, `app/ui/templates/index.html`, server `EXAMPLES` |
 | Groq model and key | `.env` only |
